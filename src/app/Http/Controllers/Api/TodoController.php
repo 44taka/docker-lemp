@@ -30,15 +30,15 @@ class TodoController extends Controller
     public function show($id)
     {
         $todo = Todo::find($id);
-        // 存在チェック
         if (is_null($todo)) {
             throw new HttpException(Response::HTTP_NOT_FOUND);
         }
+
         return response()->json($todo);
     }
 
     /**
-     * 詳細取得
+     * 新規登録
      *
      * @param Request $request
      * @return Response
@@ -50,11 +50,12 @@ class TodoController extends Controller
             'task' => 'required|max:200',
         ]);
         if ($validator->fails()) {
-            return 'エラー！！';
+            throw new HttpException(Response::HTTP_BAD_REQUEST);
         }
-        // 微妙だけど、登録処理を書く
+
         $todo = Todo::create(['task' => $request->input('task')]);
-        return response()->json($todo, 201);
+
+        return response()->json($todo, Response::HTTP_CREATED);
     }
 
     /**
@@ -71,13 +72,17 @@ class TodoController extends Controller
             'task' => 'required|max:200',
         ]);
         if ($validator->fails()) {
-            return 'エラー！！';
+            throw new HttpException(Response::HTTP_BAD_REQUEST);
         }
+
         // 微妙だけど、更新処理を書く
         $todo = Todo::find($id);
-        $todo->task = $request->input('task');
-        $todo->save();
-        return response()->json(null, 204);
+        if (is_null($todo)) {
+            throw new HttpException(Response::HTTP_NOT_FOUND);
+        }
+        $todo->update(['task' => $request->input('task')]);
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -88,8 +93,11 @@ class TodoController extends Controller
      */
     public function delete($id)
     {
-        // 微妙だけど、削除処理を書く
-        Todo::find($id)->delete();
-        return response()->json(null, 204);
+        $task = Todo::find($id);
+        if (!is_null($task)) {
+            $task->delete();
+        }
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

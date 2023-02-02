@@ -56,14 +56,13 @@ class Handler extends ExceptionHandler
                 // HttpExceptionの場合
                 if ($e instanceof HttpException) {
                     switch ($e->getStatusCode()) {
-                        case Response::HTTP_NOT_FOUND:
-                            $message = __('Not Found');
-                            break;
                         case Response::HTTP_BAD_REQUEST:
                             $message = __('Bad Request');
                             break;
+                        case Response::HTTP_NOT_FOUND:
+                            $message = __('Not Found');
+                            break;
                     }
-
                     return response()->json(['message' => $message], $e->getStatusCode());
                 }
 
