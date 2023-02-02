@@ -3,6 +3,11 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -43,8 +48,39 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        // APIのエラーハンドリング
+        $this->renderable(function (Throwable $e, Request $request) {
+            if ($request->is('api/*')) {
+                $message = '';
+
+                // HttpExceptionの場合
+                if ($e instanceof HttpException) {
+                    switch ($e->getStatusCode()) {
+                        case Response::HTTP_NOT_FOUND:
+                            $message = __('Not Found');
+                            break;
+                        case Response::HTTP_BAD_REQUEST:
+                            $message = __('Bad Request');
+                            break;
+                    }
+
+                    return response()->json(['message' => $message], $e->getStatusCode());
+                }
+
+                // HttpException以外の場合
+                $message = config('app.debug') ? [
+                    'message' => $e->getMessage(),
+                    'code' => $e->getCode(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace_str' => $e->getTraceAsString(),
+                    'trace' => $e->getTrace()
+                ] : __('Server Error');
+
+                return response()->json([
+                    'message' => $message
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
         });
     }
 }

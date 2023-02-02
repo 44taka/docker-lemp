@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\TodoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +23,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/test', [TestController::class, 'index']);
+
+// サンプル
+Route::controller(TodoController::class)->group(function () {
+    Route::get('/todos', 'index');
+    Route::get('/todos/{id}', 'show');
+    Route::post('/todos', 'create');
+    Route::put('/todos/{id}', 'update');
+    Route::delete('/todos/{id}', 'delete');
+});
