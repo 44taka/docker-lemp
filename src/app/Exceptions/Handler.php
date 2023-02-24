@@ -63,7 +63,10 @@ class Handler extends ExceptionHandler
                             $message = __('Not Found');
                             break;
                     }
-                    return response()->json(['message' => $message], $e->getStatusCode());
+                    return response()->json(
+                        ['message' => $message],
+                        $e->getStatusCode()
+                    );
                 }
 
                 // HttpException以外の場合

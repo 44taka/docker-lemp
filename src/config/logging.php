@@ -67,6 +67,7 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
+            'tap' => [App\Logging\CustomizeFormatter::class],
             'days' => 14,
         ],
 

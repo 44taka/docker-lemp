@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Todo extends Model
 {
-    use HasFactory; // TODO: これなんだろう。。？
+    use HasFactory;
     protected $fillable = ['task'];
 }
