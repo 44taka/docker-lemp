@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\TodoController;
+use App\Http\Controllers\Api\AuthorController;
+use App\Http\Controllers\Api\BookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,11 +26,27 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/test', [TestController::class, 'index']);
 
-// サンプル
+// Todo
 Route::controller(TodoController::class)->group(function () {
     Route::get('/todos', 'index');
     Route::get('/todos/{id}', 'show');
     Route::post('/todos', 'create');
     Route::put('/todos/{id}', 'update');
     Route::delete('/todos/{id}', 'delete');
+});
+
+// Author
+Route::controller(AuthorController::class)->group(function () {
+    Route::get('/authors', 'index');
+    Route::get('/authors/{id}', 'show');
+});
+
+
+// Book
+Route::controller(BookController::class)->group(function () {
+    Route::get('/books', 'index');
+    Route::get('/books/{id}', 'show');
+    Route::post('/books', 'create');
+    Route::put('/books/{id}', 'update');
+    Route::delete('/books/{id}', 'delete');
 });

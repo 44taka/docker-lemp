@@ -31,7 +31,7 @@ class TraceLog
             [
                 'method' => $request->method(),
                 'url' => $request->fullUrl(),
-                'response' => json_decode($response->content()),
+                'response' => $response->content(),
                 'status_code' => $response->status()
             ]
         );

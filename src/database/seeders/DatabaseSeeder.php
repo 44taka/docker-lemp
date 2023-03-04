@@ -2,9 +2,12 @@
 
 namespace Database\Seeders;
 
-use Database\Seeders\TodoSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+
+use Database\Seeders\TodoSeeder;
+use Database\Seeders\AuthorSeeder;
+use Database\Seeders\BookSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,5 +19,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(TodoSeeder::class);
+        $this->call(AuthorSeeder::class);
+        $this->call(BookSeeder::class);
     }
 }
