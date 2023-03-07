@@ -52,9 +52,9 @@ class BookService
      * ID検索
      *
      * @param integer $id
-     * @return Book
+     * @return Book|null
      */
-    public function find_by_id($id): Book
+    public function find_by_id($id): Book|null
     {
         return $this->book_model->with('author')->find($id);
     }

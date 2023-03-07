@@ -4,12 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\BookResource;
+use App\Http\Resources\Api\BookCollection;
+use App\Http\Resources\Api\BookResource;
 use App\Http\Requests\Api\BookRequest;
 use App\Services\Api\BookService;
 
@@ -30,7 +29,7 @@ class BookController extends Controller
     public function index(Request $request)
     {
         $book = $this->book_service->find($request->query('title'));
-        return BookResource::collection($book);
+        return new BookCollection($book);
     }
 
     /**

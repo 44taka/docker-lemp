@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Api;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class BookResource extends JsonResource
 {
+    public static $wrap = null;
+
     /**
      * Transform the resource into an array.
      *

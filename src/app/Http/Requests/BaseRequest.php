@@ -5,7 +5,6 @@ namespace App\Http\Requests;
 use Illuminate\Http\Response;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class BaseRequest extends FormRequest
@@ -34,7 +33,12 @@ class BaseRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        // TODO:対応を考える
-        throw new HttpException(Response::HTTP_BAD_REQUEST);
+        $data = [
+            'message' => 'Invalid request parameter.',
+            'details' => $validator->errors()->toArray(),
+        ];
+        throw new HttpResponseException(
+            response()->json($data, Response::HTTP_BAD_REQUEST)
+        );
     }
 }

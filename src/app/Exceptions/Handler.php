@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 use Throwable;
@@ -49,8 +50,10 @@ class Handler extends ExceptionHandler
     {
         // APIのエラーハンドリング
         $this->renderable(function (Throwable $e, Request $request) {
+            // TODO: リファクタする
             if ($request->is('api/*')) {
                 $message = '';
+                $details = [];
 
                 // HttpExceptionの場合
                 if ($e instanceof HttpException) {
@@ -61,26 +64,61 @@ class Handler extends ExceptionHandler
                         case Response::HTTP_NOT_FOUND:
                             $message = __('Not Found');
                             break;
+                        case Response::HTTP_METHOD_NOT_ALLOWED:
+                            $message = __('Method Not Allowed');
+                            break;
+                        case Response::HTTP_INTERNAL_SERVER_ERROR:
+                            $message = __('Internal Server Error');
+                            break;
+                        case Response::HTTP_SERVICE_UNAVAILABLE:
+                            $message = __('Service Unavailable');
+                            break;
                     }
+                    Log::error('API ERROR', ['detail' => [
+                        'message' => $e->getMessage(),
+                        'code' => $e->getCode(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                        'trace_str' => $e->getTraceAsString(),
+                        'trace' => $e->getTrace()
+                    ]]);
                     return response()->json(
-                        ['message' => $message],
+                        [
+                            'message' => $message,
+                            'details' => $details,
+                        ],
                         $e->getStatusCode()
                     );
                 }
 
                 // HttpException以外の場合
-                $message = config('app.debug') ? [
+                $data = config('app.debug') ? [
+                    'message' => $e->getMessage(),
+                    'details' => [
+                        'code' => $e->getCode(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                        'trace_str' => $e->getTraceAsString(),
+                        'trace' => $e->getTrace()
+                    ]
+                ] : [
+                    'message' => __('Internal Server Error'),
+                    'details' => [],
+                ];
+
+                Log::error('APPLICATION ERROR', ['detail' => [
                     'message' => $e->getMessage(),
                     'code' => $e->getCode(),
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
                     'trace_str' => $e->getTraceAsString(),
-                    'trace' => $e->getTrace()
-                ] : __('Server Error');
+                    // 'trace' => $e->getTrace()
+                ]]);
 
-                return response()->json([
-                    'message' => $message
-                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                return response()->json(
+                    $data,
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                );
             }
         });
     }
