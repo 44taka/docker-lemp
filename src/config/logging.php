@@ -67,6 +67,7 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
+            'tap' => [App\Logging\CustomizeFormatter::class],
             'days' => 14,
         ],
 
@@ -117,6 +118,20 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | カスタムログ
+    |--------------------------------------------------------------------------
+    */
+
+    'request' => [
+        'enable' => env('LOG_REQUEST_ENABLE', false),
+    ],
+
+    'sql' => [
+        'enable' => env('LOG_SQL_ENABLE', false),
     ],
 
 ];

@@ -12,13 +12,13 @@ services:
     volumes:
       - ./src/:/var/www/html
     # 環境変数を設定(.envに紐づく)
-    environment:
-      - DB_CONNECTION=mysql
-      - DB_HOST=db
-      - DB_PORT=3306
-      - DB_DATABASE=${DB_NAME}
-      - DB_USERNAME=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
+    # environment:
+    #   - DB_CONNECTION=mysql
+    #   - DB_HOST=db
+    #   - DB_PORT=3306
+    #   - DB_DATABASE=laravel_database
+    #   - DB_USERNAME=docker
+    #   - DB_PASSWORD=docker
 
   # サービス名: Nginx
   web:
@@ -28,7 +28,7 @@ services:
       dockerfile: ./docker/web/Dockerfile
     # ローカル(PC)とDockerコンテナ間のポート番号の対応づけを設定{ローカル}:{Dockerコンテナ}
     ports:
-      - ${WEB_PORT}:80
+      - 80:80
     # コンテナ間の依存関係を設定(appはPHPアプリケーションのコンテナを指す)PHP->Nginxの順にコンテナを起動させる
     depends_on:
       - app
@@ -43,13 +43,13 @@ services:
       dockerfile: ./docker/db/Dockerfile
     # ローカルのポート番号(MySQLのデフォルトのポート番号は3306)
     ports:
-      - ${DB_PORT}:3306
+      - 3306:3306
     # MySQLの環境変数
     environment:
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: laravel_database
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
+      MYSQL_ROOT_PASSWORD: root
       TZ: 'Asia/Tokyo'
     volumes:
       - mysql-volume:/var/lib/mysql
