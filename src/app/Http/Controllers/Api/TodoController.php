@@ -17,8 +17,9 @@ class TodoController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        Log::debug('query', ['hoge' => $request->query('hoge')]);
         return response()->json(Todo::get());
     }
 
